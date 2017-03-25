@@ -2,6 +2,18 @@
 
 Modul til MagicMirror som viser hvor mange minutter det er til neste buss til hver destinasjon fra utvalgte holdeplasser går. Plukk ut aktuelle holdeplasser i nærheten. Finn holdeplassenes holdeplassnummer på AtB sin [holdeplassoversikt](https://www.atb.no/holdeplassoversikt/). Legg disse inn i `config.js` som beskrevet nedenfor (stopIds).
 
+## Installasjon
+
+Gå til din `MagicMirror/modules` mappe og skriv
+
+    git clone git@github.com:ottopaulsen/MMM-NesteBussAtB.git
+    cd MMM-NesteBussAtB
+    npm install
+
+Installer node-pakker med 
+
+
+
 ## Konfigurasjon
 
 Dette er default-konfigurasjon med forklaring (skal inn i MagicMirror sin `config.js`:
