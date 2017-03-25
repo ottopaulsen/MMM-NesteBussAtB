@@ -6,7 +6,6 @@ Modul til MagicMirror som viser hvor mange minutter det er til neste buss til hv
 
 Dette er default-konfigurasjon med forklaring (skal inn i MagicMirror sin `config.js`:
 
-
         {
             module: 'MMM-NesteBussAtB',
             position: 'upper_third',
@@ -21,4 +20,4 @@ Dette er default-konfigurasjon med forklaring (skal inn i MagicMirror sin `confi
                 maxCount: 2, // Max number of next buses per route
                 maxMinutes: 45 // Do not show buses more then this minutes into the future
             }
-        }
+        }
