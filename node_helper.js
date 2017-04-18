@@ -16,7 +16,7 @@ module.exports = NodeHelper.create({
             setTimeout(function(){
                 self.broadcastMessage();
             }, 2000);
-        }, 10000);	
+        }, 30000);	
     },
 
 	socketNotificationReceived: function(notification, payload) {
