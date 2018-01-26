@@ -118,9 +118,9 @@ Module.register("MMM-NesteBussAtB",{
 
     toDate: function(s){
         // Translate the API date to Date object
-        year = s.substring(6, 10);
-        month = parseInt(s.substring(3, 5)) - 1;
-        day = s.substring(0, 2);
+        year = s.substring(0, 4);
+        month = parseInt(s.substring(5, 7)) - 1;
+        day = s.substring(8, 10);
         hour = s.substring(11, 13);
         minute = s.substring(14, 16);
         time = new Date(year, month, day, hour, minute, 0, 0);

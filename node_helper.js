@@ -3,7 +3,8 @@ var request = require('request');
 // var moment = require('moment');
 var buses = [];
 var requestCount = 0;
-var baseUrl = 'http://bybussen.api.tmn.io/rt/';
+// var baseUrl = 'http://bybussen.api.tmn.io/rt/';
+var baseUrl = 'http://bartebuss.no/api/unified/';
 
 module.exports = NodeHelper.create({
 
@@ -15,7 +16,7 @@ module.exports = NodeHelper.create({
             self.readBuses();
             setTimeout(function(){
                 self.broadcastMessage();
-            }, 2000);
+            }, 4000);
         }, 30000);	
     },
 
@@ -29,40 +30,41 @@ module.exports = NodeHelper.create({
             self.readBuses();
             setTimeout(function(){
                 self.broadcastMessage();
-            }, 2000);
+            }, 4000);
 		}
 	},
 
     readBuses: function() {
         if (this.loaded){
-            // console.log('Reading bus data');
+            console.log('Reading bus data');
             self = this;
             stops = self.config.stopIds;
             if (!requestCount) buses = [];
             requestCount = stops.length;
             stops.forEach(function(stopId){
-                // console.log('Bus stop: ' + stopId);
+                console.log('Bus stop: ' + stopId);
                 url = baseUrl + stopId;
                 request(url, function(error, response, body){
                     if(!error){
                         var data = JSON.parse(body);
-                        var routes = new Map();
-                        // console.log('Bus stop: ' + data.name);
-                        for(i = 0; i < data.next.length; i++){
-                            var bus = data.next[i];
-                            var key = bus.l + bus.d;
-                            var routeCount = routes.has(key) ? routes.get(key) : 0; 
-                            var minutes = Math.round((self.toDate(bus.t) - (new Date())) / 60000);
-                            if(routeCount < self.config.maxCount && minutes <= self.config.maxMinutes){
-                                routeCount++;
-                                routes.set(key, routeCount);
-                                buses.push({
-                                    number: bus.l,
-                                    from: data.name,
-                                    to: bus.d,
-                                    time: bus.t
-                                });
-                                // console.log('Bus nr. ' + bus.l + ' til ' + bus.d + ' går kl. ' + bus.t);
+                        console.log('Bus stop: ' + data.name);
+                        if(data.name){
+                            for(i in data.schedule){
+                                var bus = data.schedule[i];
+                                for(i = 0; i < self.config.maxCount; i++){
+                                    if(bus.departures[i]){
+                                        var minutes = Math.round((self.toDate(bus.departures[i].t) - (new Date())) / 60000);
+                                        console.log('Pushing minutes = ' + minutes + ', maxMinutes = ' + self.config.maxMinutes);
+                                        if(minutes <= self.config.maxMinutes){
+                                            buses.push({
+                                                number: bus.line,
+                                                from: data.name,
+                                                to: bus.destination,
+                                                time: bus.departures[i].t
+                                            });
+                                        }
+                                    }
+                                }
                             }
                         }
                     } else {
@@ -84,9 +86,9 @@ module.exports = NodeHelper.create({
 	},
 
 toDate: function(s){
-        year = s.substring(6, 10);
-        month = parseInt(s.substring(3, 5)) - 1;
-        day = s.substring(0, 2);
+        year = s.substring(0, 4);
+        month = parseInt(s.substring(5, 7)) - 1;
+        day = s.substring(8, 10);
         hour = s.substring(11, 13);
         minute = s.substring(14, 16);
         time = new Date(year, month, day, hour, minute, 0, 0);
