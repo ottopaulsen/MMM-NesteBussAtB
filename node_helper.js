@@ -19,6 +19,7 @@ module.exports = NodeHelper.create({
     },
 
 	socketNotificationReceived: function(notification, payload) {
+        self = this;
 		if (notification === 'SET_CONFIG') {
             this.config = payload;
             this.loaded = true;
