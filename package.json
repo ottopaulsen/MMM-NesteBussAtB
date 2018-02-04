@@ -1,10 +1,12 @@
 {
-  "name"         : "MMM-NesteBussAtB",
-  "version"      : "0.0.1",
-  "description"  : "Vis neste avganger fra angitte holdeplasser",
-  "author"       : "Otto Paulsen",
-  "dependencies" : {
-    "request"    : "latest",
-    "font-awesome"    : "latest"
+  "name": "MMM-NesteBussAtB",
+  "version": "0.0.1",
+  "description": "Vis neste avganger fra angitte holdeplasser",
+  "author": "Otto Paulsen",
+  "dependencies": {
+    "font-awesome": "latest",
+    "request": "latest",
+    "soap": "^0.23.0",
+    "xml-js": "^1.6.2"
   }
 }
