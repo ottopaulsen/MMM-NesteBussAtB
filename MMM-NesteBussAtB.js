@@ -86,6 +86,7 @@ Module.register("MMM-NesteBussAtB",{
 			if (self.config.showFrom) {
 				var fromWrapper = document.createElement("td");
                 fromWrapper.innerHTML = bus.from;
+                fromWrapper.className = "align-left";
                 busWrapper.appendChild(fromWrapper);
 			}
 
