@@ -24,7 +24,7 @@ Module.register("MMM-NesteBussAtB",{
 	},
 
 	openBusConnection: function() { 
-		this.sendSocketNotification('SET_CONFIG', this.config);
+		this.sendSocketNotification('NESTEBUSSATB_CONFIG', this.config);
 	},
 
 	socketNotificationReceived: function(notification, payload) {

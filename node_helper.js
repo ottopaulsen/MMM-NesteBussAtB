@@ -9,33 +9,33 @@ module.exports = NodeHelper.create({
 	start: function() {
 		console.log('Starting node helper for: ' + this.name);
         this.loaded = false;
-        self = this;
+        var self = this;
         setInterval(function() {
             self.readBuses();
             setTimeout(function(){
                 self.broadcastMessage();
-            }, 4000);
+            }, 1000);
         }, 30000);	
     },
 
 	socketNotificationReceived: function(notification, payload) {
-        self = this;
-		if (notification === 'SET_CONFIG') {
-            this.config = payload;
-            this.loaded = true;
-            console.log(this.name + ': Connection started');
+        var self = this;
+		if (notification === 'NESTEBUSSATB_CONFIG') {
+            self.config = payload;
+            console.log(self.name + ': AtB Connection started');
 
             // Read it immediately once
             self.readBuses();
+            self.loaded = true;
             setTimeout(function(){
                 self.broadcastMessage();
-            }, 10000);
+            }, 1000);
 		}
 	},
 
     readBuses: function() {
         if (this.loaded){
-            self = this;
+            var self = this;
             stops = self.config.stopIds;
             if (!requestCount) buses = [];
             requestCount = stops.length;
@@ -45,10 +45,12 @@ module.exports = NodeHelper.create({
                         var routes = new Map();
                         for(i =0; i < data.buses.length; i++){
                             var bus = data.buses[i];
-                            var key = bus.line;
+                            var key = bus.line + bus.from;
                             var routeCount = routes.has(key) ? routes.get(key) : 0; 
                             var minutes = Math.round((self.toDate(bus.time) - (new Date())) / 60000);
                             if(routeCount < self.config.maxCount && minutes <= self.config.maxMinutes){
+                                routeCount++;
+                                routes.set(key, routeCount);
                                 buses.push({
                                     number: bus.line,
                                     from: bus.name,
@@ -71,7 +73,7 @@ module.exports = NodeHelper.create({
         buses.sort(function(a, b){
             return (self.toDate(a.time) - self.toDate(b.time));
         });
-		this.sendSocketNotification('BUS_DATA', buses);
+		self.sendSocketNotification('BUS_DATA', buses);
 	},
 
     toDate: function(s){
@@ -99,7 +101,7 @@ module.exports = NodeHelper.create({
                         + currentTime.getSeconds() + '.'
                         + currentTime.getMilliseconds() + 'Z';
         var requestor = 'github.com/ottopaulsen/MMM-NesteBussAtB';
-        var previewInterval = 'PT' + self.config.maxMinutes + 'M';
+        var previewInterval = 'PT' + this.config.maxMinutes + 'M';
         var xml = `
         <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:siri="http://www.siri.org.uk/siri">
         <soapenv:Header/>
@@ -123,7 +125,7 @@ module.exports = NodeHelper.create({
     },
     
     getAtbStopTimes: function(stopId, handleResponse){
-        self = this;
+        var self = this;
         request({
             headers: {
               'Content-Type': 'text/xml; charset=utf-8',
