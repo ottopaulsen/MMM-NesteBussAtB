@@ -7,7 +7,7 @@ var requestCount = 0;
 module.exports = NodeHelper.create({
 
 	start: function() {
-		console.log('Starting node helper for: ' + this.name);
+		console.log(this.name + ': Starting node helper');
         this.loaded = false;
         var self = this;
         setInterval(function() {
@@ -25,8 +25,8 @@ module.exports = NodeHelper.create({
             console.log(self.name + ': AtB Connection started');
 
             // Read it immediately once
-            self.readBuses();
             self.loaded = true;
+            self.readBuses();
             setTimeout(function(){
                 self.broadcastMessage();
             }, 1000);
@@ -45,17 +45,17 @@ module.exports = NodeHelper.create({
                         var routes = new Map();
                         for(i =0; i < data.buses.length; i++){
                             var bus = data.buses[i];
-                            var key = bus.line + bus.from;
+                            var key = bus.line.trim() + bus.name.trim();
                             var routeCount = routes.has(key) ? routes.get(key) : 0; 
                             var minutes = Math.round((self.toDate(bus.time) - (new Date())) / 60000);
                             if(routeCount < self.config.maxCount && minutes <= self.config.maxMinutes){
                                 routeCount++;
                                 routes.set(key, routeCount);
                                 buses.push({
-                                    number: bus.line,
-                                    from: bus.name,
-                                    to: bus.destination,
-                                    time: bus.time
+                                    number: bus.line.trim(),
+                                    from: bus.name.trim(),
+                                    to: bus.destination.trim(),
+                                    time: bus.time.trim()
                                 });
                             }
                         }
@@ -73,8 +73,20 @@ module.exports = NodeHelper.create({
         buses.sort(function(a, b){
             return (self.toDate(a.time) - self.toDate(b.time));
         });
-		self.sendSocketNotification('BUS_DATA', buses);
-	},
+		self.sendSocketNotification('BUS_DATA', buses.filter(function(el,i,a){
+            return self.duplicateBuses(el, a[i - 1]); // Seems that some times AtB returns duplicated buses
+        }));
+    },
+    
+    duplicateBuses: function(a, b){
+        if(!a) return false;
+        if(!b) return false;
+        if(a.number != b.number) return false;
+        if(a.from != b.from) return false;
+        if(a.to != b.to) return false;
+        if(a.time != b.time) return false;
+        return true;
+    },
 
     toDate: function(s){
         year = s.substring(0, 4);
