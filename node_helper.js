@@ -73,9 +73,17 @@ module.exports = NodeHelper.create({
         buses.sort(function(a, b){
             return (self.toDate(a.time) - self.toDate(b.time));
         });
-		self.sendSocketNotification('BUS_DATA', buses.filter(function(el,i,a){
-            return self.duplicateBuses(el, a[i - 1]); // Seems that some times AtB returns duplicated buses
-        }));
+        filteredBuses = buses.filter(function(el,i,a){
+            return !self.duplicateBuses(el, a[i - 1]); // Seems that some times AtB returns duplicated buses
+        });
+		self.sendSocketNotification('BUS_DATA', filteredBuses);
+    },
+
+    printBuses(label, b){
+        console.log(label);
+        for(i=0; i < b.length; i++){
+            console.log('Bus ' + i + ': Line ' + b[i].number + ' from ' + b[i].from + ' to ' + b[i].to + ' time ' + b[i].time);
+        }
     },
     
     duplicateBuses: function(a, b){
