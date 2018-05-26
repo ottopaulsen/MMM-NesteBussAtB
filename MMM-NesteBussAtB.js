@@ -79,6 +79,7 @@ Module.register("MMM-NesteBussAtB",{
 			if (self.config.showNumber) {
 				var numberWrapper = document.createElement("td");
                 numberWrapper.innerHTML = bus.number;
+                numberWrapper.className = "atb-number";
                 busWrapper.appendChild(numberWrapper);
 			}
 
@@ -86,21 +87,21 @@ Module.register("MMM-NesteBussAtB",{
 			if (self.config.showFrom) {
 				var fromWrapper = document.createElement("td");
                 fromWrapper.innerHTML = bus.from;
-                fromWrapper.className = "align-left";
+                fromWrapper.className = "align-left atb-from";
                 busWrapper.appendChild(fromWrapper);
 			}
 
             // Destinasjon
 			if (self.config.showTo) {
 				var toWrapper = document.createElement("td");
-                toWrapper.className = "align-left";
+                toWrapper.className = "align-left atb-to";
                 toWrapper.innerHTML = bus.to;
                 busWrapper.appendChild(toWrapper);
 			}
 
             // Minutter
             var minutesWrapper = document.createElement("td");
-            minutesWrapper.className = "align-right";
+            minutesWrapper.className = "align-right atb-minutes";
             minutesWrapper.innerHTML = minutes;
             busWrapper.appendChild(minutesWrapper);
 

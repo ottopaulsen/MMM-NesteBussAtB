@@ -5,3 +5,13 @@
 .border_top td{
     border-top: 1pt solid #444444;
 }
+
+.atb-number {
+    padding-right: 20px;
+}
+.atb-from {
+    padding-right: 30px;
+}
+.atb-to {
+    padding-right: 30px;
+}
