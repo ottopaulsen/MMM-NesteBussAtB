@@ -5,8 +5,8 @@
   "author": "Otto Paulsen",
   "dependencies": {
     "font-awesome": "latest",
-    "request": "latest",
-    "soap": "^0.23.0",
+    "request": "^2.88.0",
+    "soap": "^0.24.0",
     "xml-js": "^1.6.2"
   }
 }
