@@ -36,4 +36,4 @@ Dette er default-konfigurasjon med forklaring (skal inn i MagicMirror sin `confi
                 maxMinutes: 45, // Do not show buses more then this minutes into the future
                 stacked: true // Show multiple buses on same row, if same route and destination       
             }
-        }
+        },
