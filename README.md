@@ -12,7 +12,7 @@ Kan også vise en mer kompakt visning med flere avganger av samme buss på samme
 
 Gå til din `MagicMirror/modules` mappe og skriv
 
-    git clone git@github.com:ottopaulsen/MMM-NesteBussAtB.git
+    git clone https://github.com/ottopaulsen/MMM-NesteBussAtB.git
     cd MMM-NesteBussAtB
     npm install
 
