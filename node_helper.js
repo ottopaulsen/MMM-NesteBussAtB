@@ -42,7 +42,8 @@ module.exports = NodeHelper.create({
                                 number: bus.line.trim(),
                                 from: bus.name.trim(),
                                 to: bus.destination.trim(),
-                                time: bus.time.trim()
+                                time: bus.time.trim(),
+                                monitored: bus.monitored
                             });
                         }
                     }
@@ -179,7 +180,8 @@ module.exports = NodeHelper.create({
                                 line: monitoredStopVisit[i]['MonitoredVehicleJourney']['PublishedLineName']['_text'],
                                 destination: monitoredStopVisit[i]['MonitoredVehicleJourney']['MonitoredCall']['DestinationDisplay']['_text'],
                                 time: time,
-                                name: monitoredStopVisit[i]['MonitoredVehicleJourney']['MonitoredCall']['StopPointName']['_text']
+                                name: monitoredStopVisit[i]['MonitoredVehicleJourney']['MonitoredCall']['StopPointName']['_text'],
+                                monitored: monitored == 'true'
                             }
                         }
                     }

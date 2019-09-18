@@ -11,7 +11,9 @@ Module.register("MMM-NesteBussAtB", {
         stopIds: [16011496, 16010496],
         maxCount: 2, // Max number of next buses per route
         maxMinutes: 45, // Do not show buses more then this minutes into the future
-        stacked: true // Show multiple buses on same row, if same route and destination
+        stacked: true, // Show multiple buses on same row, if same route and destination
+        showMonitored: false, //Write ca in front of mintues if bus isn't monitored (if not stacked)
+        showTimeLimit: 45 //Show time of departure instead of minutes, if more than this limit until departure
     },
 
     start: function () {
@@ -111,9 +113,18 @@ Module.register("MMM-NesteBussAtB", {
                     var busTime = self.toDate(bus.times[i]);
                     minutes += ', ' + Math.round((busTime - now) / 60000);
                 }
+                minutes += " min";
             } else {
                 var busTime = self.toDate(bus.time);
                 minutes = Math.round((busTime - now) / 60000);
+                if(minutes > self.config.showTimeLimit){
+                    minutes = busTime.getHours() + ':' + (busTime.getMinutes() < 10 ? '0' : '') + busTime.getMinutes();
+                }else if (self.config.showMin) {
+                    minutes += " min";
+                }
+                if (self.config.showMonitored && !bus.monitored) {
+                    minutes = 'ca ' + minutes;
+                }
             }
 
             var busWrapper = document.createElement("tr");
@@ -157,14 +168,6 @@ Module.register("MMM-NesteBussAtB", {
             minutesWrapper.className = "align-right atb-minutes";
             minutesWrapper.innerHTML = minutes;
             busWrapper.appendChild(minutesWrapper);
-
-            // Min (text)
-            if (self.config.showMin) {
-                var minWrapper = document.createElement("td");
-                minWrapper.className = "align-left";
-                minWrapper.innerHTML = '&nbsp;min';
-                busWrapper.appendChild(minWrapper);
-            }
 
             wrapper.appendChild(busWrapper);
         });
