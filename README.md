@@ -34,6 +34,8 @@ Dette er default-konfigurasjon med forklaring (skal inn i MagicMirror sin `confi
                 stopIds: [16011496, 16010496], // See https://www.atb.no/holdeplassoversikt/
                 maxCount: 2, // Max number of next buses per route
                 maxMinutes: 45, // Do not show buses more then this minutes into the future
-                stacked: true // Show multiple buses on same row, if same route and destination       
+                stacked: true, // Show multiple buses on same row, if same route and destination
+                showMonitored: false, // Write ca in front of minutes if bus isn't monitored (if not stacked)
+                showTimeLimit: 45 // If not stacked, show time of departure instead of minutes, if more than this limit until departure.
             }
         },
