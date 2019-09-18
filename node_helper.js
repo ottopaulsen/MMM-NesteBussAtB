@@ -177,7 +177,7 @@ module.exports = NodeHelper.create({
                             }
                             result.buses[i] = {
                                 line: monitoredStopVisit[i]['MonitoredVehicleJourney']['PublishedLineName']['_text'],
-                                destination: monitoredStopVisit[i]['MonitoredVehicleJourney']['DestinationName']['_text'],
+                                destination: monitoredStopVisit[i]['MonitoredVehicleJourney']['MonitoredCall']['DestinationDisplay']['_text'],
                                 time: time,
                                 name: monitoredStopVisit[i]['MonitoredVehicleJourney']['MonitoredCall']['StopPointName']['_text']
                             }
