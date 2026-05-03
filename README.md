@@ -18,7 +18,7 @@ Gå til din `MagicMirror/modules` mappe og skriv
 
 ## Finn holdeplass-ID
 
-Modulen bruker NSR holdeplass-IDer på formen `NSR:StopPlace:XXXXX`.
+Modulen bruker nummer-delen av NSR holdeplass-IDer, f.eks. XXXXX fra id`NSR:StopPlace:XXXXX`.
 
 Finn riktig id i Enturs kart: https://entur.no/kart
 

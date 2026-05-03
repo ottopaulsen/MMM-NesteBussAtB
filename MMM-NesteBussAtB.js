@@ -22,6 +22,7 @@ Module.register("MMM-NesteBussAtB", {
     start: function () {
         console.log(this.name + ' started.')
         this.buses = [];
+        this.loaded = false;
         this.openBusConnection();
         var self = this;
         setInterval(function () {
@@ -36,6 +37,7 @@ Module.register("MMM-NesteBussAtB", {
 
     socketNotificationReceived: function (notification, payload) {
         if (notification == 'BUS_DATA') {
+            this.loaded = true;
             if (payload != null) {
                 this.buses = this.config.stacked ? this.stackBuses(payload) : payload;
                 this.updateDom();
@@ -103,9 +105,10 @@ Module.register("MMM-NesteBussAtB", {
         var first = true;
 
         if (self.buses.length === 0) {
-            wrapper.innerHTML = (self.loaded) ? self.translate("EMPTY") : self.translate("LOADING");
+            wrapper.innerHTML = self.loaded
+                ? 'Ingen busser neste ' + self.config.maxMinutes + ' minutt'
+                : self.translate("LOADING");
             wrapper.className = "medium dimmed";
-            console.log(self.name + ': No buses');
             return wrapper;
         }
 
