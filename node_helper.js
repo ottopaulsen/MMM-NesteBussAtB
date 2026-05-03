@@ -68,6 +68,7 @@ module.exports = NodeHelper.create({
             return [];
         }
 
+        const { lineFilter = [], destinationFilter = [] } = this.config;
         const routes = new Map();
         const result = [];
 
@@ -80,6 +81,9 @@ module.exports = NodeHelper.create({
             const time = call.realtime ? call.expectedDepartureTime : call.aimedDepartureTime;
             const minutes = Math.round((new Date(time) - new Date()) / 60000);
 
+            if (lineFilter.length > 0 && !lineFilter.includes(line)) continue;
+            if (destinationFilter.length > 0 && !destinationFilter.some(f => destination.startsWith(f))) continue;
+
             if (routeCount < maxCount && minutes <= maxMinutes) {
                 routes.set(key, routeCount + 1);
                 result.push({
@@ -87,7 +91,10 @@ module.exports = NodeHelper.create({
                     from: quayName,
                     to: destination,
                     time,
-                    monitored: call.realtime
+                    monitored: call.realtime,
+                    delay: call.realtime
+                        ? Math.round((new Date(call.expectedDepartureTime) - new Date(call.aimedDepartureTime)) / 60000)
+                        : 0
                 });
             }
         }

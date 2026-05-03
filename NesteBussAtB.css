@@ -15,3 +15,11 @@
 .atb-to {
     padding-right: 30px;
 }
+
+.atb-realtime {
+    color: #33cc33;
+}
+
+.atb-not-realtime {
+    color: #888888;
+}

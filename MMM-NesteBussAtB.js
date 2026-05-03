@@ -13,7 +13,10 @@ Module.register("MMM-NesteBussAtB", {
         maxMinutes: 45, // Do not show buses more then this minutes into the future
         stacked: true, // Show multiple buses on same row, if same route and destination
         showMonitored: false, //Write ca in front of mintues if bus isn't monitored (if not stacked)
-        showTimeLimit: 45 //Show time of departure instead of minutes, if more than this limit until departure
+        showTimeLimit: 45, //Show time of departure instead of minutes, if more than this limit until departure
+        lineFilter: [], // Only show these line numbers, e.g. ["1", "22"]. Empty = show all.
+        destinationFilter: [], // Only show destinations starting with these strings, e.g. ["Ranheim", "Kattem"]. Empty = show all.
+        delayDisplay: [] // Color the minutes by delay, e.g. [{minutes: 2, color: "orange"}, {minutes: 5, color: "red"}]
     },
 
     start: function () {
@@ -46,37 +49,42 @@ Module.register("MMM-NesteBussAtB", {
         stackedBuses = [];
 
         buses.sort(function (a, b) {
-            // return (self.toDate(a.time) - self.toDate(b.time));
             return ('' + a.from + a.number + a.to + a.time).localeCompare('' + b.from + b.number + b.to + b.time);
         });
 
         var len = buses.length;
         var previousStackvalue = '';
         var stackedTimes = [];
+        var groupStart = 0;
         if (len > 0) {
             previousStackvalue = '' + buses[0].from + buses[0].number + buses[0].to;
-            stackedTimes.push(buses[0].time);
+            stackedTimes.push({ time: buses[0].time, delay: buses[0].delay });
             for (var i = 1; i < len; i++) {
                 stackvalue = '' + buses[i].from + buses[i].number + buses[i].to;
                 if (stackvalue == previousStackvalue) {
-                    stackedTimes.push(buses[i].time);
+                    stackedTimes.push({ time: buses[i].time, delay: buses[i].delay });
                 } else {
                     stackedBuses.push({
-                        from: buses[i - 1].from,
-                        number: buses[i - 1].number,
-                        to: buses[i - 1].to,
-                        times: stackedTimes
+                        from: buses[groupStart].from,
+                        number: buses[groupStart].number,
+                        to: buses[groupStart].to,
+                        times: stackedTimes,
+                        monitored: buses[groupStart].monitored,
+                        delay: buses[groupStart].delay
                     });
+                    groupStart = i;
                     previousStackvalue = stackvalue;
                     stackedTimes = [];
-                    stackedTimes.push(buses[i].time)
+                    stackedTimes.push({ time: buses[i].time, delay: buses[i].delay })
                 }
             }
             stackedBuses.push({
-                from: buses[len - 1].from,
-                number: buses[len - 1].number,
-                to: buses[len - 1].to,
-                times: stackedTimes
+                from: buses[groupStart].from,
+                number: buses[groupStart].number,
+                to: buses[groupStart].to,
+                times: stackedTimes,
+                monitored: buses[groupStart].monitored,
+                delay: buses[groupStart].delay
             });
         }
         return stackedBuses;
@@ -105,15 +113,15 @@ Module.register("MMM-NesteBussAtB", {
             var now = new Date();
             var minutes = '';
             if(self.config.stacked) {
-                if(bus.times.length > 0) {
-                    var busTime = self.toDate(bus.times[0]);
-                    minutes = Math.round((busTime - now) / 60000);
-                }
-                for(var i=1; i < bus.times.length; i++){
-                    var busTime = self.toDate(bus.times[i]);
-                    minutes += ', ' + Math.round((busTime - now) / 60000);
-                }
-                minutes += " min";
+                var parts = bus.times.map(function(entry) {
+                    var busTime = self.toDate(entry.time);
+                    var mins = Math.round((busTime - now) / 60000);
+                    var color = self.getDelayColor(entry.delay || 0);
+                    return color
+                        ? '<span style="color:' + color + '">' + mins + '</span>'
+                        : '' + mins;
+                });
+                minutes = parts.join(', ') + ' min';
             } else {
                 var busTime = self.toDate(bus.time);
                 minutes = Math.round((busTime - now) / 60000);
@@ -134,7 +142,8 @@ Module.register("MMM-NesteBussAtB", {
             // Icon
             if (self.config.showIcon) {
                 var iconWrapper = document.createElement("td");
-                iconWrapper.innerHTML = '<i class="fa fa-bus" aria-hidden="true"></i>';
+                var realtimeClass = bus.monitored ? "atb-realtime" : "atb-not-realtime";
+                iconWrapper.innerHTML = '<i class="fa fa-bus ' + realtimeClass + '" aria-hidden="true"></i>';
                 iconWrapper.className = "align-right";
                 busWrapper.appendChild(iconWrapper);
             }
@@ -167,11 +176,29 @@ Module.register("MMM-NesteBussAtB", {
             var minutesWrapper = document.createElement("td");
             minutesWrapper.className = "align-right atb-minutes";
             minutesWrapper.innerHTML = minutes;
+            if (!self.config.stacked) {
+                var delayColor = self.getDelayColor(bus.delay || 0);
+                if (delayColor) {
+                    minutesWrapper.style.color = delayColor;
+                }
+            }
             busWrapper.appendChild(minutesWrapper);
 
             wrapper.appendChild(busWrapper);
         });
         return wrapper;
+    },
+
+    getDelayColor: function (delay) {
+        var color = null;
+        var highest = -1;
+        (this.config.delayDisplay || []).forEach(function (entry) {
+            if (delay >= entry.minutes && entry.minutes > highest) {
+                highest = entry.minutes;
+                color = entry.color;
+            }
+        });
+        return color;
     },
 
     toDate: function (s) {

@@ -45,7 +45,10 @@ Dette er default-konfigurasjon med forklaring (skal inn i MagicMirror sin `confi
                 maxMinutes: 45,          // Do not show buses more than this many minutes into the future
                 stacked: true,           // Show multiple buses on same row, if same route and destination
                 showMonitored: false,    // Write ca in front of minutes if bus isn't real-time (if not stacked)
-                showTimeLimit: 45        // If not stacked: show time of departure instead of minutes if more than this limit
+                showTimeLimit: 45,       // If not stacked: show time of departure instead of minutes if more than this limit
+                lineFilter: [],          // Only show these lines (exact match), e.g. ["1", "22"]. Empty = show all.
+                destinationFilter: [],   // Only show destinations starting with these strings, e.g. ["Ranheim", "Kattem"]. Empty = show all.
+                delayDisplay: []         // Color the minutes by delay, e.g. [{minutes: 2, color: "orange"}, {minutes: 5, color: "red"}]
             }
         },
 
@@ -55,8 +58,34 @@ Du kan overstyre CSS for alt som vises. Tilgjengelige CSS-klasser:
 
 | Klasse | Beskrivelse |
 |--------|-------------|
-| `.atb-number` | Busstallnummer |
+| `.atb-number` | Busslinjnummer |
 | `.atb-from` | Holdeplassnavn |
 | `.atb-to` | Destinasjon |
 | `.atb-minutes` | Minutter til avgang |
+
+## Filtrering
+
+Bruk `lineFilter` og `destinationFilter` for å begrense hvilke avganger som vises:
+
+```js
+// Vis kun linje 1 og 22, og kun avganger mot Ranheim eller Kattem
+lineFilter: ["1", "22"],
+destinationFilter: ["Ranheim", "Kattem"]
+```
+
+- **`lineFilter`** — eksakt match på linjenummer (string). Tom array = vis alle linjer.
+- **`destinationFilter`** — vis destinasjoner som *starter med* en av strengene i listen. Tom array = vis alle destinasjoner.
+
+## Forsinkelsesvisning
+
+Bruk `delayDisplay` for å farge minuttene basert på hvor forsinket bussen er:
+
+```js
+delayDisplay: [
+    { minutes: 2, color: "orange" },
+    { minutes: 5, color: "red" }
+]
+```
+
+Hvis bussen er forsinket med minst det angitte antall minutter, vises minuttfeltet i den tilhørende fargen. Hvis forsinkelsen treffer flere terskler, brukes fargen for den høyeste terskelen. Tom array = ingen farging.
 
