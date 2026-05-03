@@ -1,12 +1,9 @@
 {
   "name": "MMM-NesteBussAtB",
   "version": "0.0.1",
-  "description": "Vis neste avganger fra angitte holdeplasser",
+  "description": "Vis neste avganger fra angitte holdeplasser (AtB, Trondheim)",
   "author": "Otto Paulsen",
   "dependencies": {
-    "font-awesome": "latest",
-    "request": "^2.88.0",
-    "soap": "^0.24.0",
-    "xml-js": "^1.6.2"
+    "font-awesome": "latest"
   }
 }

@@ -8,7 +8,7 @@ Module.register("MMM-NesteBussAtB", {
         showTo: true,
         showMin: true,
         size: "medium",
-        stopIds: [16011496, 16010496],
+        stopIds: [43243, 42915],
         maxCount: 2, // Max number of next buses per route
         maxMinutes: 45, // Do not show buses more then this minutes into the future
         stacked: true, // Show multiple buses on same row, if same route and destination
@@ -175,13 +175,6 @@ Module.register("MMM-NesteBussAtB", {
     },
 
     toDate: function (s) {
-        // Translate the API date to Date object
-        year = s.substring(0, 4);
-        month = parseInt(s.substring(5, 7)) - 1;
-        day = s.substring(8, 10);
-        hour = s.substring(11, 13);
-        minute = s.substring(14, 16);
-        time = new Date(year, month, day, hour, minute, 0, 0);
-        return time;
+        return new Date(s);
     }
 });
